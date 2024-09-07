@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+{% include 'navbar.html' %}
+
+<section class="relative py-10 bg-gray-100">
+
+  <div class="relative z-10 max-w-screen-xl mx-auto text-gray-600 sm:px-4 md:px-8">
+
+    <div class="mx-auto px-4 p-8 bg-white sm:max-w-lg sm:px-8 sm:rounded-2xl">
+
+        <div class="max-w-lg space-y-3 px-4 sm:mx-auto sm:text-center sm:px-0">
+            <h1 class="text-gray-700 text-3xl font-light sm:text-4xl"> Contact Us </h1>
+        </div>
+      <form onsubmit="event.preventDefault()" class="space-y-5 mt-12">
+        <div class="flex flex-col items-center gap-y-5 gap-x-6 [&>*]:w-full sm:flex-row">
+          <div>
+                <label class="font-medium">First name</label>
+                <input type="text" required class="w-full mt-2 px-3 py-2 text-gray-500 bg-transparent outline-none border focus:border-indigo-600 shadow-sm rounded-lg"/>
+          </div>
+          <div>
+                <label class="font-medium"> Last name </label>
+                <input type="text" required class="w-full mt-2 px-3 py-2 text-gray-500 bg-transparent outline-none border focus:border-indigo-600 shadow-sm rounded-lg"/>
+          </div>
+        </div>
+        <div>
+          <label class="font-medium"> Email</label>
+          <input type="email" required class="w-full mt-2 px-3 py-2 text-gray-500 bg-transparent outline-none border focus:border-gray-800 shadow-sm rounded-lg"/>
+        </div>
+        <div>
+          <label class="font-medium"> Message </label>
+          <textarea required class="w-full mt-2 h-36 px-3 py-2 resize-none appearance-none bg-transparent outline-none border focus:border-gray-800 shadow-sm rounded-lg"></textarea>
+        </div>
+        <button class="w-full px-4 py-2 text-white font-medium bg-gray-800 hover:bg-gray-700 active:bg-gray-900 rounded-lg duration-150"> Submit </button>
+      </form>
+    </div>
+  </div>
+
+</section>
+
+{% endblock content %}

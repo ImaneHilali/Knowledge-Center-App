@@ -1,0 +1,204 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<section class="py-14">
+  <div class="max-w-screen-xl mx-auto px-4 text-gray-600 md:px-8">
+    <div class="relative max-w-2xl mx-auto sm:text-center">
+      <div class="relative z-10">
+        <h3 class="text-gray-800 text-3xl font-semibold sm:text-4xl">
+          Your Team of Experts
+        </h3>
+        <p class="mt-3">
+        Discover the Specialized Services Offered by Each Team
+        </p>
+      </div>
+      <div
+        class="absolute inset-0 max-w-xs mx-auto h-44 blur-[118px]"
+        style="
+          background: linear-gradient(
+            152.92deg,
+            rgba(192, 132, 252, 0.2) 4.54%,
+            rgba(232, 121, 249, 0.26) 34.2%,
+            rgba(192, 132, 252, 0.1) 77.55%
+          );
+        "
+      ></div>
+    </div>
+    <div class="relative mt-12">
+      <ul
+        class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3"
+        x-data="{ features: [
+              {
+            icon: `
+                <svg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke-width='1.5' stroke='currentColor' class='w-6 h-6'>
+                    <path stroke-linecap='round' stroke-linejoin='round' d='M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z' />
+                </svg>`,
+            title: 'Master Data',
+            desc: '<ul><li>Manage Master Data for YAZAKI EUROPE affiliates in the YEMEA region.</li><li>Streamline the creation & extension of new raw materials.</li><li>Resolve daily plant issues related to SAP.</li><li>Conduct weekly checks & updates of SAP data.</li><li>Implement automation for repetitive tasks.</li></ul>'
+        },
+        {
+            icon: `
+                <svg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke-width='1.5' stroke='currentColor' class='w-6 h-6'>
+                    <path stroke-linecap='round' stroke-linejoin='round' d='M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z' />
+                </svg>`,
+            title: 'Problem Solving',
+            desc: '<ul><li>Problem-Solving Process: Identify issues, collect data for root cause analysis, and evaluate defined solutions.</li><li>Logistics Training for YEMEA Affiliates: Deliver comprehensive logistics training to all YEMEA affiliates.</li><li>Utilize Problem-Solving Tools: Apply Ishikawa, Pareto, 5 Whys, and SWOT in addressing challenges.</li></ul>'
+        },
+        {
+            icon: `
+                <svg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke-width='1.5' stroke='currentColor' class='w-6 h-6'>
+                    <path stroke-linecap='round' stroke-linejoin='round' d='M6.429 9.75L2.25 12l4.179 2.25m0-4.5l5.571 3 5.571-3m-11.142 0L2.25 7.5 12 2.25l9.75 5.25-4.179 2.25m0 0L21.75 12l-4.179 2.25m0 0l4.179 2.25L12 21.75 2.25 16.5l4.179-2.25m11.142 0l-5.571 3-5.571-3' />
+                </svg>`,
+            title: 'Invoice Control',
+            desc: '<ul><li>Handling unpaid invoices.</li><li>Prioritize Due & High-Value Invoices.</li><li>Analyse & Fix Root Causes.</li><li>Establish precise guidelines for suppliers to prevent future invoice blockages.</li><li>Match the invoice details with Purchase Orders released.</li></ul>'
+        }
+          ] }"
+      >
+        <template x-for="(feature, idx) in features" :key="idx">
+          <li class="bg-white space-y-3 p-4 border rounded-lg">
+            <div
+              class="flex items-center mb-4 text-indigo-600"
+              x-html="feature.icon"
+            ></div>
+            <h5
+              class="text-lg font-semibold text-gray-800"
+              x-text="feature.title"
+            ></h5>
+            <p class="mt-2 text-base" x-html="feature.desc.replace('<ul>', '<ul class=\'my-list\'>')"></p>
+          </li>
+        </template>
+      </ul>
+    </div>
+  </div>
+</section>
+
+
+<div x-data="{
+    features: [
+        {
+            icon: `
+                <svg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke-width='1.5' stroke='currentColor' class='w-6 h-6'>
+                    <path stroke-linecap='round' stroke-linejoin='round' d='M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z' />
+                </svg>`,
+            title: 'Master Data',
+            desc: '<ul><li>Manage Master Data for YAZAKI EUROPE affiliates in the YEMEA region.</li><li>Streamline the creation & extension of new raw materials.</li><li>Resolve daily plant issues related to SAP.</li><li>Conduct weekly checks & updates of SAP data.</li><li>Implement automation for repetitive tasks.</li></ul>'
+        },
+        {
+            icon: `
+                <svg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke-width='1.5' stroke='currentColor' class='w-6 h-6'>
+                    <path stroke-linecap='round' stroke-linejoin='round' d='M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z' />
+                </svg>`,
+            title: 'Problem Solving',
+            desc: '<ul><li>Problem-Solving Process: Identify issues, collect data for root cause analysis, and evaluate defined solutions.</li><li>Logistics Training for YEMEA Affiliates: Deliver comprehensive logistics training to all YEMEA affiliates.</li><li>Utilize Problem-Solving Tools: Apply Ishikawa, Pareto, 5 Whys, and SWOT in addressing challenges.</li></ul>'
+        },
+        {
+            icon: `
+                <svg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke-width='1.5' stroke='currentColor' class='w-6 h-6'>
+                    <path stroke-linecap='round' stroke-linejoin='round' d='M6.429 9.75L2.25 12l4.179 2.25m0-4.5l5.571 3 5.571-3m-11.142 0L2.25 7.5 12 2.25l9.75 5.25-4.179 2.25m0 0L21.75 12l-4.179 2.25m0 0l4.179 2.25L12 21.75 2.25 16.5l4.179-2.25m11.142 0l-5.571 3-5.571-3' />
+                </svg>`,
+            title: 'Invoice Control',
+            desc: '<ul><li>Handling unpaid invoices.</li><li>Prioritize Due & High-Value Invoices.</li><li>Analyse & Fix Root Causes.</li><li>Establish precise guidelines for suppliers to prevent future invoice blockages.</li><li>Match the invoice details with Purchase Orders released.</li></ul>'
+        }
+    ]
+}">
+    <section class="py-14">
+        <div class="max-w-screen-xl mx-auto px-4 text-gray-600 md:px-8">
+            <div class="max-w-xl space-y-3">
+                <h3 class="text-indigo-600 font-semibold">
+                    Features
+                </h3>
+                <p class="text-gray-800 text-3xl font-semibold sm:text-4xl">
+                    The Yazaki Business Support Center: Your Team of Experts
+                </p>
+                <p>
+                    Discover the Specialized Services Offered by Each Team
+                </p>
+            </div>
+            <div class="mt-12">
+                <ul class="grid gap-x-12 divide-y [&>.feature-1]:pl-0 sm:grid-cols-2 sm:gap-y-8 sm:divide-y-0 lg:divide-x lg:grid-cols-3 lg:gap-x-0">
+                    <template x-for="(item, idx) in features" :key="idx">
+                        <li :class="`space-y-3 py-8 lg:px-12 sm:py-0`" :class="[idx === 0 ? 'pl-0' : 'pl-48']">
+                            <div class="w-12 h-12 border text-indigo-600 rounded-full flex items-center justify-center" x-html="item.icon"></div>
+                            <h4 class="text-lg text-gray-800 font-semibold" x-text="item.title"></h4>
+                            <p x-html="item.desc.replace('<ul>', '<ul class=\'my-list\'>')"></p>
+                        </li>
+                    </template>
+                </ul>
+            </div>
+        </div>
+    </section>
+</div>
+
+    <section class="py-8">
+  <div
+    class="max-w-screen-xl mx-auto px-4 text-center text-gray-600 md:px-8"
+  >
+    <div class="max-w-2xl mx-auto">
+      <h3 class="text-gray-800 text-3xl font-semibold sm:text-4xl">
+        The Yazaki Business Support Center: Your Team of Experts
+      </h3>
+      <p class="mt-3">
+        Discover the Specialized Services Offered by Each Team
+      </p>
+    </div>
+    <div class="mt-12">
+      <ul
+        class="grid gap-y-8 gap-x-12 sm:grid-cols-2 lg:grid-cols-3"
+        x-data="{ features: [
+          {
+            icon: `<svg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' strokeWidth={1.5} stroke='currentColor' class='w-6 h-6'>
+              <path strokeLinecap='round' strokeLinejoin='round' d='M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z' />
+          </svg>`,
+            title: 'Master Data',
+            desc: '<ul><li>Manage Master Data for YAZAKI EUROPE affiliates in the YEMEA region.</li><li>Streamline the creation & extension of new raw materials.</li><li>Resolve daily plant issues related to SAP.</li><li>Conduct weekly checks & updates of SAP data.</li><li>Implement automation for repetitive tasks.</li></ul>'
+          },
+          {
+            icon: `<svg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' strokeWidth={1.5} stroke='currentColor' class='w-6 h-6'>
+              <path strokeLinecap='round' strokeLinejoin='round' d='M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z' />
+          </svg>`,
+            title: 'Problem Solving',
+            desc: '<ul><li>Problem-Solving Process: Identify issues, collect data for root cause analysis, and evaluate defined solutions.</li><li>Logistics Training for YEMEA Affiliates: Deliver comprehensive logistics training to all YEMEA affiliates.</li><li>Utilize Problem-Solving Tools: Apply Ishikawa, Pareto, 5 Whys, and SWOT in addressing challenges.</li></ul>'
+          },
+          {
+            icon: `<svg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' strokeWidth={1.5} stroke='currentColor' class='w-6 h-6'>
+              <path strokeLinecap='round' strokeLinejoin='round' d='M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z' />
+          </svg>`,
+            title: 'Invoice Control',
+            desc: '<ul><li>Handling unpaid invoices.</li><li>Prioritize Due & High-Value Invoices.</li><li>Analyse & Fix Root Causes.</li><li>Establish precise guidelines for suppliers to prevent future invoice blockages.</li><li>Match the invoice details with Purchase Orders released.</li></ul>'
+          }
+        ]}"
+      >
+        <template x-for="(item, index) in features" :key="index">
+          <li class="space-y-3">
+            <div
+              class="w-12 h-12 mx-auto bg-indigo-50 text-indigo-600 rounded-full flex items-center justify-center"
+              x-html="item.icon"
+            >
+              <!-- SVG Icon will be inserted here -->
+            </div>
+            <h4
+              class="text-lg text-gray-800 font-semibold"
+              x-text="item.title"
+            >
+              <!-- Title will be inserted here -->
+            </h4>
+            <p x-html="item.desc.replace('<ul>', '<ul class=\'my-list\'>')">
+              <!-- Description will be inserted here -->
+            </p>
+          </li>
+        </template>
+      </ul>
+    </div>
+  </div>
+</section>
+<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M3.646 4.146a.5.5 0 01.708 0L10 9.293l5.646-5.647a.5.5 0 11.708.708L10.707 10l5.647 5.646a.5.5 0 01-.708.708L10 10.707l-5.646 5.647a.5.5 0 01-.708-.708L9.293 10 3.646 4.354a.5.5 0 010-.708z" clip-rule="evenodd" />
+              </svg>
+<style>
+.my-list {
+  list-style: disc;
+}
+</style>
+
+{% endblock content %}

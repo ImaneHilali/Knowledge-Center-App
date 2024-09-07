@@ -1,0 +1,59 @@
+<div class="overflow-x-auto mt-4 mb-4">
+<table class="table-auto w-full border-collapse border shadow-lg">
+    <thead>
+        <tr>
+            <th class="px-4 py-3 bg-gray-50 text-left font-semibold whitespace-nowrap">Material</th>
+            <th class="px-4 py-2 bg-gray-100 text-left font-semibold whitespace-nowrap">Supplier</th>
+            <th class="px-4 py-2 bg-red-100 text-left font-semibold whitespace-nowrap">Document Date</th>
+            <th class="px-4 py-2 bg-gray-200 text-left font-semibold whitespace-nowrap">GPDB Price Current</th>
+            <th class="px-4 py-2 bg-gray-50 text-left font-semibold whitespace-nowrap">Invoice PCS price</th>
+            <th class="px-4 py-2 bg-gray-100 text-left font-semibold whitespace-nowrap">Quantity</th>
+            <th class="px-4 py-2 bg-gray-200 text-left font-semibold whitespace-nowrap">Difference Value</th>
+            <th class="px-4 py-2 bg-gray-50 text-left font-semibold whitespace-nowrap">Reference</th>
+            <th class="px-4 py-2 bg-gray-100 text-left font-semibold whitespace-nowrap">MM doc. number</th>
+            <th class="px-4 py-2 bg-gray-200 text-left font-semibold whitespace-nowrap">Full price per 1000 pcs</th>
+            <th class="px-4 py-2 bg-gray-50 text-left font-semibold whitespace-nowrap">Affiliate</th>
+            <th class="px-4 py-2 bg-gray-100 text-left font-semibold whitespace-nowrap">MPF Price</th>
+            <th class="px-4 py-2 bg-gray-200 text-left font-semibold whitespace-nowrap">MPF Price Valid From</th>
+            <th class="px-4 py-2 bg-gray-50 text-left font-semibold whitespace-nowrap">MPF Price Valid To</th>
+            <th class="px-4 py-2 bg-gray-100 text-left font-semibold whitespace-nowrap">Base Price</th>
+            <th class="px-4 py-2 bg-gray-200 text-left font-semibold whitespace-nowrap">Price Base</th>
+            <th class="px-4 py-2 bg-gray-50 text-left font-semibold whitespace-nowrap">Base Price Valid From</th>
+            <th class="px-4 py-2 bg-gray-100 text-left font-semibold whitespace-nowrap">Base Price Valid To</th>
+            <th class="px-4 py-2 bg-gray-200 text-left font-semibold whitespace-nowrap">Metal Price</th>
+            <th class="px-4 py-2 bg-red-100 text-left font-semibold whitespace-nowrap">Comments</th>
+            <th class="px-4 py-2 bg-red-200 text-left font-semibold whitespace-nowrap">Released</th>
+            <th class="px-4 py-2 bg-gray-50 text-left font-semibold whitespace-nowrap">Upload time</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for item in data %}
+        <tr class="{% if item.released %}released{% else %}not_released{% endif %}">
+            <td class="border px-4 py-2">{{ item.material }}</td>
+            <td class="border px-4 py-2 whitespace-nowrap">{{ item.supplier }}</td>
+            <td class="border px-4 py-2">{{ item.document_date }}</td>
+            <td class="border px-4 py-2">{{ item.gpdb_price_current }}</td>
+            <td class="border px-4 py-2">{{ item.invoice_pcs_price }}</td>
+            <td class="border px-4 py-2">{{ item.quantity }}</td>
+            <td class="border px-4 py-2">{{ item.difference_value }}</td>
+            <td class="border px-4 py-2">{{ item.reference }}</td>
+            <td class="border px-4 py-2">{{ item.mm_doc_number }}</td>
+            <td class="border px-4 py-2">{{ item.full_price_per_1000_pcs }}</td>
+            <td class="border px-4 py-2">{{ item.affiliate }}</td>
+            <td class="border px-4 py-2">{{ item.mpf_price }}</td>
+            <td class="border px-4 py-2 whitespace-nowrap">{{ item.mpf_price_valid_from }}</td>
+            <td class="border px-4 py-2 whitespace-nowrap">{{ item.mpf_price_valid_to }}</td>
+            <td class="border px-4 py-2">{{ item.base_price }}</td>
+            <td class="border px-4 py-2">{{ item.price_base }}</td>
+            <td class="border px-4 py-2 whitespace-nowrap">{{ item.base_price_valid_from }}</td>
+            <td class="border px-4 py-2 whitespace-nowrap">{{ item.base_price_valid_to }}</td>
+            <td class="border px-4 py-2">{{ item.metal_price }}</td>
+            <td class="border px-4 py-2">{{ item.comments }}</td>
+            <td class="border px-4 py-2">{{ item.released }}</td>
+            <td class="border px-4 py-2 whitespace-nowrap">{{ item.upload_date }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+</div>
+

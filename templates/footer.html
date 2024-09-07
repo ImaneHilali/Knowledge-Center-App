@@ -1,0 +1,159 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+
+
+  {% include 'navbar.html' %}
+
+  <main class="max-w-4xl mx-auto w-screen flex flex-col items-center justify-center">
+  <header class="my-6">
+    <h2 class="text-center font-semibold uppercase text-gray-300">Your Space</h2>
+    <p class="text-center font-extrabold text-sky-700 tracking-tight text-6xl">Profile</p>
+  </header>
+  <form class="w-full grid gap-2 px-4">
+    <div class="flex justify-between items-center">
+      <label for="name" class="w-32 text-right pr-4 font-bold text-gray-700">Name</label>
+      <div class="flex-1">
+        <input required placeholder="name" type="text" id="name" class="w-full rounded-md appearance-none border border-gray-300 py-2 px-2 bg-white text-gray-700 placeholder-gray-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-sky-600 focus:border-transparent">
+      </div>
+    </div>
+    <div class="flex justify-between items-center">
+      <label for="email" class="w-32 text-right pr-4 font-bold text-gray-700">Email</label>
+      <input placeholder="email@company.com" type="email" id="email" class="w-52 rounded-md flex-1 appearance-none border border-gray-300 py-2 px-2 bg-white text-gray-700 placeholder-gray-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-sky-600 focus:border-transparent">
+    </div>
+    <div class="flex justify-between items-center">
+      <label for="about" class="self-start w-32 text-right mt-2 pr-4 font-bold text-gray-700">About</label>
+      <textarea disabled id="about" name="about" placeholder="about me" rows="3" class="disabled:bg-gray-100 w-full flex-1 placeholder:text-slate-400 appearance-none border border-gray-300 py-2 px-2 bg-white text-gray-700 placeholder-gray-400 rounded-md focus:outline-none focus:ring-2 focus:ring-sky-600"></textarea>
+    </div>
+    <div class="flex justify-start items-center">
+      <label for="photo" class="w-32 text-right pr-4 font-bold text-gray-700">Photo</label>
+      <input type="file" class="block text-sm text-gray-400 file:mr-2 file:py-2 file:px-2 file:rounded-md file:border-solid file:border file:border-gray-200 file:text-sm file:bg-white file:text-gray-500 hover:file:bg-gray-100">
+    </div>
+
+
+    <div class="flex justify-start items-center">
+      <div class="w-32 text-right pr-4 font-bold text-gray-900" id="label-email">Notifications</div>
+      <div class="flex items-center mr-4">
+        <input id="notifications-all" name="notifications" type="radio" class="indeterminate:ring-2 indeterminate:ring-red-500 focus:ring-sky-600 h-4 w-4 text-sky-600 border-gray-300">
+        <label for="notifications-all" class="ml-1 block text-gray-700">All</label>
+      </div>
+      <div class="flex items-center">
+        <input id="notifications-none" name="notifications" type="radio" class="indeterminate:ring-2 indeterminate:ring-red-500 focus:ring-sky-600 h-4 w-4 text-sky-600 border-gray-300">
+        <label for="notifications-none" class="ml-1 block text-gray-700">None</label>
+      </div>
+    </div>
+    </div>
+    <div class="flex justify-end">
+      <button type="button" class="bg-white py-2 px-2 border border-gray-300 rounded-md shadow-sm font-bold text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-600">Cancel</button>
+      <button type="submit" class="ml-3 inline-flex justify-center py-2 px-2 border border-transparent shadow-sm font-bold rounded-md text-white bg-sky-600 hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-600">Update</button>
+    </div>
+  </form>
+</main>
+
+
+  <div class="bg-gray-100 flex items-center justify-center h-screen">
+    <div class="bg-white p-6 rounded shadow-md w-full max-w-md">
+        <div id="step-container" class="space-y-4">
+            <!-- Steps will be inserted here -->
+        </div>
+        <div class="mt-4 flex justify-center">
+            <button id="next-button" class="bg-blue-500 text-white px-4 py-2 rounded" onclick="nextStep()">Next</button>
+        </div>
+    </div>
+  </div>
+
+
+    <script src="script.js"></script>
+    <script>
+       let currentStep = 0;
+
+const steps = [
+    { text: "Run PowerBI Report and export to excel", next: 1 },
+    { text: "Create Excel-Report and distribute work", next: 2 },
+    { text: "Run SAP-Transaction and export excel report", next: 3 },
+    { text: "Compare 'Invoice PCS price' and current 'GPDB Price'", condition: true, yes: 4, no: 5 },
+    { text: "Release Invoice" },
+    { text: "Compare 'Invoice PCS price' and 'GPDB Price at Invoice Date'", condition: true, yes: 4, no: 6 },
+    { text: "Look up price in valid Supplier Price List" }
+];
+
+function renderStep(stepIndex) {
+    const stepContainer = document.getElementById('step-container');
+
+    const step = steps[stepIndex];
+    const stepElement = document.createElement('div');
+    stepElement.className = 'step';
+
+    const stepText = document.createElement('div');
+    stepText.className = 'mb-4';
+    stepText.innerText = step.text;
+    stepElement.appendChild(stepText);
+
+    if (step.condition) {
+        const yesButton = document.createElement('button');
+        yesButton.className = 'bg-green-500 text-white px-4 py-2 rounded mr-2';
+        yesButton.innerText = 'Yes';
+        yesButton.onclick = () => nextStep(step.yes);
+        stepElement.appendChild(yesButton);
+
+        const noButton = document.createElement('button');
+        noButton.className = 'bg-red-500 text-white px-4 py-2 rounded';
+        noButton.innerText = 'No';
+        noButton.onclick = () => nextStep(step.no);
+        stepElement.appendChild(noButton);
+
+        document.getElementById('next-button').style.display = 'none';
+    } else {
+        document.getElementById('next-button').style.display = 'block';
+    }
+
+    stepContainer.appendChild(stepElement);
+
+    // Add a line to connect steps
+    if (stepIndex < steps.length - 1) {
+        const lineElement = document.createElement('div');
+        lineElement.className = 'line h-4';
+        stepContainer.appendChild(lineElement);
+    }
+}
+
+function nextStep(nextIndex = null) {
+    if (nextIndex !== null) {
+        currentStep = nextIndex;
+    } else {
+        currentStep++;
+    }
+
+    if (currentStep < steps.length) {
+        renderStep(currentStep);
+    } else {
+        alert('End of steps');
+        document.getElementById('next-button').style.display = 'none';
+    }
+}
+
+// Initial render
+renderStep(currentStep);
+
+</script>
+
+<style>
+.my-list {
+        list-style: disc;
+    }
+
+.font-playfair {
+        font-family: 'Playfair Display', serif;
+    }
+.font-inter {
+        font-family: 'Inter', sans-serif;
+    }
+.line {
+        width: 2px;
+        background: #ccc;
+        margin: 0 auto;
+    }
+</style>
+
+{% endblock content %}

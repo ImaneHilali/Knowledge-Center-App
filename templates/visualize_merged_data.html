@@ -1,0 +1,243 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+{% include 'navbar.html' %}
+
+<div class="container mx-auto px-24 pt-10 bg-gray-50">
+
+     <h1 class="text-gray-800 text-3xl font-semibold sm:text-4xl mb-4 pb-5 text-center font-playfair">Visualize Merged Data</h1>
+        <div class="flex justify-between mb-4 pt-8">
+            <div class="flex space-x-4 items-center">
+                <label for="filterSelect" class="mr-2">Filter by :</label>
+                <select id="filterSelect" class="py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500" onchange="filterByParameter()">
+                    <option value="material">Material</option>
+                    <option value="supplier">Supplier</option>
+                    <option value="document_date">Document Date</option>
+                    <option value="gpdb_price_current">GPDB Price Current</option>
+                    <option value="invoice_pcs_price">Invoice PCS price</option>
+                    <option value="quantity">Quantity</option>
+                    <option value="difference_value">Difference Value</option>
+                    <option value="reference">Reference</option>
+                    <option value="mm_doc_number">MM Doc. Number</option>
+                    <option value="comments">Comments</option>
+                    <option value="full_price_per_1000_pcs">Full price per 1000 pcs</option>
+                    <option value="affiliate">Affiliate</option>
+                    <option value="mpf_price">MPF Price</option>
+                    <option value="mpf_price_valid_from">MPF Price Valid From</option>
+                    <option value="mpf_price_valid_to">MPF Price Valid To</option>
+                    <option value="base_price">Base Price</option>
+                    <option value="price_base">Price Base</option>
+                    <option value="base_price_valid_from">Base Price Valid From</option>
+                    <option value="base_price_valid_to">Base Price Valid To</option>
+                    <option value="metal_price">Metal Price</option>
+                    <option value="timestamp">Upload Time</option>
+                    <option value="root_cause">Root cause</option>
+                </select>
+
+                <input type="text" id="filterInput" onkeyup="filterByParameter()" placeholder="Enter value" class="py-2 px-4 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:border-blue-500">
+
+                <button onclick="toggleAdditionalFilters()" class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition duration-300 ease-in-out">+ Add Filter</button>
+            </div>
+
+            <a href="{% url 'export_to_excel' %}" class="py-2 px-4 bg-blue-500 text-white rounded-lg shadow-sm hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">Export to Excel</a>
+        </div>
+    <div id="additionalFiltersContainer" style="display: none;">
+    <label for="additionalFilterSelect">Filter by :</label>
+    <select id="additionalFilterSelect" onchange="filterByParameter()" class="py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+        <option value="material">Material</option>
+            <option value="supplier">Supplier</option>
+            <option value="document_date">Document Date</option>
+            <option value="gpdb_price_current">GPDB Price Current</option>
+            <option value="invoice_pcs_price">Invoice PCS price</option>
+            <option value="quantity">Quantity</option>
+            <option value="difference_value">Difference Value</option>
+            <option value="reference">Reference</option>
+            <option value="mm_doc_number">MM Doc. Number</option>
+            <option value="comments">Comments</option>
+            <option value="full_price_per_1000_pcs">Full price per 1000 pcs</option>
+            <option value="mpf_price">MPF Price</option>
+            <option value="mpf_price_valid_from">MPF Price Valid From</option>
+            <option value="mpf_price_valid_to">MPF Price Valid To</option>
+            <option value="base_price">Base Price</option>
+            <option value="price_base">Price Base</option>
+            <option value="base_price_valid_from">Base Price Valid From</option>
+            <option value="base_price_valid_to">Base Price Valid To</option>
+            <option value="metal_price">Metal Price</option>
+            <option value="timestamp">Upload Time</option>
+    </select>
+
+    <label for="additionalFilterInput"></label>
+    <input type="text" id="additionalFilterInput" onkeyup="filterByParameter()" placeholder="Enter value" class="py-2 px-4 border rounded-lg mb-4 shadow-sm focus:outline-none focus:border-blue-500">
+            <button onclick="addFilter()" class="mb-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition duration-300 ease-in-out">+ </button>
+
+    </div>
+
+    <div class="overflow-x-auto">
+        <table id="mergedDataTable" class="table-auto w-full border-collapse border border-gray-400 shadow-lg">
+            <thead>
+                <tr class="bg-gradient-to-r from-gray-100 to-gray-200">
+                    <th class="px-4 py-2 border border-gray-300 text-left font-semibold whitespace-nowrap">Material</th>
+                    <th class="px-4 py-2 border border-gray-300 text-left font-semibold whitespace-nowrap">Supplier</th>
+                    <th class="px-4 py-2 border border-gray-300 text-left font-semibold whitespace-nowrap">Site name</th>
+                    <th class="px-4 py-2 border border-gray-300 text-left font-semibold whitespace-nowrap bg-red-100">Document Date</th>
+                    <th class="px-4 py-2 border border-gray-300 text-left font-semibold whitespace-nowrap">GPDB Price Current</th>
+                    <th class="px-4 py-2 border border-gray-300 text-left font-semibold whitespace-nowrap">Invoice PCS Price</th>
+                    <th class="px-4 py-2 border border-gray-300 text-left font-semibold whitespace-nowrap">Quantity</th>
+                    <th class="px-4 py-2 border border-gray-300 text-left font-semibold whitespace-nowrap">MOQ</th>
+                    <th class="px-4 py-2 border border-gray-300 text-left font-semibold whitespace-nowrap">Difference Value</th>
+                    <th class="px-4 py-2 border border-gray-300 text-left font-semibold whitespace-nowrap">Reference</th>
+                    <th class="px-4 py-2 border border-gray-300 text-left font-semibold whitespace-nowrap">MM doc. number</th>
+                    <th class="px-4 py-2 border border-gray-300 text-left font-semibold whitespace-nowrap">Full price per 1000 pcs</th>
+                    <th class="px-4 py-2 border border-gray-300 text-left font-semibold whitespace-nowrap">Affiliate</th>
+                    <th class="px-4 py-2 border border-gray-300 text-left font-semibold whitespace-nowrap">MPF Price</th>
+                    <th class="px-4 py-2 border border-gray-300 text-left font-semibold whitespace-nowrap">MPF Price Valid From</th>
+                    <th class="px-4 py-2 border border-gray-300 text-left font-semibold whitespace-nowrap">MPF Price Valid To</th>
+                    <th class="px-4 py-2 border border-gray-300 text-left font-semibold whitespace-nowrap">Base Price</th>
+                    <th class="px-4 py-2 border border-gray-300 text-left font-semibold whitespace-nowrap">Price Base</th>
+                    <th class="px-4 py-2 border border-gray-300 text-left font-semibold whitespace-nowrap">Base Price Valid From</th>
+                    <th class="px-4 py-2 border border-gray-300 text-left font-semibold whitespace-nowrap">Base Price Valid To</th>
+                    <th class="px-4 py-2 border border-gray-300 text-left font-semibold whitespace-nowrap">Metal Price</th>
+                    <th class="px-4 py-2 border border-gray-300 text-left font-semibold whitespace-nowrap bg-red-100">Comments</th>
+                    <th class="px-4 py-2 border border-gray-300 text-left font-semibold whitespace-nowrap bg-red-200">Released</th>
+                    <th class="px-4 py-2 border border-gray-300 text-left font-semibold whitespace-nowrap">Upload Time</th>
+                    <th class="px-4 py-2 border border-gray-300 text-left font-semibold whitespace-nowrap">Root Cause</th>
+
+                </tr>
+            </thead>
+            <tbody class="bg-white">
+                {% for merged_data in merged_data %}
+                <tr class="hover:bg-gray-100">
+                    <td class="border px-4 py-2">{{ merged_data.material }}</td>
+                    <td class="border px-4 py-2 whitespace-nowrap">{{ merged_data.supplier }}</td>
+                    <td class="border px-4 py-2 whitespace-nowrap">{{ merged_data.site_name }}</td>
+                    <td class="border px-4 py-2">{{ merged_data.document_date }}</td>
+                    <td class="border px-4 py-2">{{ merged_data.gpdb_price_current }}</td>
+                    <td class="border px-4 py-2">{{ merged_data.invoice_pcs_price }}</td>
+                    <td class="border px-4 py-2">{{ merged_data.quantity }}</td>
+                    <td class="border px-4 py-2">{{ merged_data.moq }}</td>
+                    <td class="border px-4 py-2">{{ merged_data.difference_value }}</td>
+                    <td class="border px-4 py-2">{{ merged_data.reference }}</td>
+                    <td class="border px-4 py-2">{{ merged_data.mm_doc_number }}</td>
+                    <td class="border px-4 py-2">{{ merged_data.full_price_per_1000_pcs }}</td>
+                    <td class="border px-4 py-2">{{ merged_data.affiliate }}</td>
+                    <td class="border px-4 py-2">{{ merged_data.mpf_price }}</td>
+                    <td class="border px-4 py-2 whitespace-nowrap">{{ merged_data.mpf_price_valid_from }}</td>
+                    <td class="border px-4 py-2 whitespace-nowrap">{{ merged_data.mpf_price_valid_to }}</td>
+                    <td class="border px-4 py-2">{{ merged_data.base_price }}</td>
+                    <td class="border px-4 py-2">{{ merged_data.price_base }}</td>
+                    <td class="border px-4 py-2 whitespace-nowrap">{{ merged_data.base_price_valid_from }}</td>
+                    <td class="border px-4 py-2 whitespace-nowrap">{{ merged_data.base_price_valid_to }}</td>
+                    <td class="border px-4 py-2">{{ merged_data.metal_price }}</td>
+                    <td class="border px-4 py-2 whitespace-nowrap">{{ merged_data.comments }}</td>
+                    <td class="border px-4 py-2">{{ merged_data.released }}</td>
+                    <td class="border px-4 py-2 whitespace-nowrap">{{ merged_data.upload_date }}</td>
+                    <td class="border px-4 py-2 whitespace-nowrap">{{ merged_data.root_cause }}</td>
+
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+
+<style>
+.font-playfair {
+        font-family: 'Playfair Display', serif;
+    }
+</style>
+<script>
+    // Function to filter table rows based on selected parameters and entered values
+    function filterByParameter() {
+        // Filter by main filter
+        var select, input, filter, table, tr, td, i, txtValue, selectedIndex;
+        select = document.getElementById("filterSelect");
+        selectedIndex = select.selectedIndex;
+        input = document.getElementById("filterInput");
+        filter = input.value.toUpperCase();
+        table = document.getElementById("mergedDataTable");
+        tr = table.getElementsByTagName("tr");
+        for (i = 0; i < tr.length; i++) {
+            td = tr[i].getElementsByTagName("td")[selectedIndex];
+            if (td) {
+                txtValue = td.textContent || td.innerText;
+                if (txtValue.toUpperCase().indexOf(filter) > -1 || filter === '') {
+                    tr[i].style.display = "";
+                } else {
+                    tr[i].style.display = "none";
+                }
+            }
+        }
+
+        // Filter by additional filter
+        var additionalSelect, additionalInput, additionalFilter, additionalTr, additionalTd, additionalTxtValue, additionalSelectedIndex;
+        additionalSelect = document.getElementById("additionalFilterSelect");
+        additionalSelectedIndex = additionalSelect.selectedIndex;
+        additionalInput = document.getElementById("additionalFilterInput");
+        additionalFilter = additionalInput.value.toUpperCase();
+        for (i = 0; i < tr.length; i++) {
+            additionalTd = tr[i].getElementsByTagName("td")[additionalSelectedIndex];
+            if (additionalTd) {
+                additionalTxtValue = additionalTd.textContent || additionalTd.innerText;
+                if (additionalTxtValue.toUpperCase().indexOf(additionalFilter) > -1 || additionalFilter === '') {
+                    tr[i].style.display = (tr[i].style.display === "none") ? "none" : "";
+                } else {
+                    tr[i].style.display = "none";
+                }
+            }
+        }
+
+    }
+
+    // Function to toggle the visibility of additional filters
+    function toggleAdditionalFilters() {
+        var additionalFiltersContainer = document.getElementById("additionalFiltersContainer");
+        if (additionalFiltersContainer.style.display === "none") {
+            additionalFiltersContainer.style.display = "block";
+        } else {
+            additionalFiltersContainer.style.display = "none";
+        }
+    }
+
+
+    function addFilter() {
+    var additionalFiltersContainer = document.getElementById("additionalFiltersContainer");
+
+    // Clone the select and input elements
+    var selectClone = additionalFiltersContainer.querySelector("select").cloneNode(true);
+    var inputClone = additionalFiltersContainer.querySelector("input").cloneNode(true);
+
+    // Clear the input field
+    inputClone.value = '';
+
+    // Append the "+" button to the cloned container
+    var addButton = document.createElement("button");
+    addButton.textContent = "+";
+    addButton.onclick = addFilter;
+
+    // Append the "-" button to the cloned container
+    var removeButton = document.createElement("button");
+    removeButton.textContent = "-";
+    removeButton.onclick = function() {
+        additionalFiltersContainer.removeChild(selectClone);
+        additionalFiltersContainer.removeChild(inputClone);
+        additionalFiltersContainer.removeChild(addButton);
+        additionalFiltersContainer.removeChild(removeButton);
+        filterByParameter(); // Call filterByParameter after removing elements
+    };
+
+    // Call filterByParameter when input changes
+    inputClone.onkeyup = filterByParameter;
+
+    additionalFiltersContainer.appendChild(selectClone);
+    additionalFiltersContainer.appendChild(inputClone);
+    additionalFiltersContainer.appendChild(addButton);
+    additionalFiltersContainer.appendChild(removeButton);
+    filterByParameter(); // Call filterByParameter after adding elements
+}
+
+</script>
+
+{% endblock %}

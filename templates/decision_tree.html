@@ -1,0 +1,159 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+{% include 'navbar.html' %}
+
+<body>
+    <div class="container mx-auto px-24 pt-10 pb-10">
+        <h1 class="text-gray-800 text-3xl font-semibold sm:text-4xl mb-4 pb-5 text-center font-playfair">Invoice Classification System </h1>
+        <h3 class="text-2xl font-bold mb-4 pt-4 pb-5">The BIC Process : The blocked invoices check process (DM)</h3>
+
+        <form action="{% url 'release_invoice' %}" method="get" class="mb-4 flex">
+            <input type="text" name="material" placeholder="Enter Material" class="py-2 px-4 border border-r-0 rounded-l-lg shadow-sm focus:outline-none focus:border-blue-500">
+            <button type="submit" class="py-2 px-4 bg-blue-500 text-white rounded-r-lg">Search</button>
+        </form>
+
+        {% if material_count %}
+
+        <div class="text-center mb-4">
+            <p class="text-lg font-semibold">Material: {{ material }}</p>
+            <p class="text-sm text-gray-600">Repeated {{ material_count }} times, {{ released_count }} released, {{ not_released_count }} not released</p>
+        </div>
+
+        <div class="mb-4 text-left">
+            <canvas id="materialPieChart" width="180" height="180"></canvas>
+        </div>
+        {% endif %}
+
+        {% if decision_steps_list %}
+            {% for item in decision_steps_list %}
+
+        <h2 class="text-xl font-semibold mt-8 mb-2">Sample for Material: {{ item.material }}</h2>
+
+            <div class="overflow-x-auto mt-4 mb-4">
+                <table class="table-auto w-full border-collapse border border-gray-800 shadow-lg">
+                    <thead>
+                        <tr class="bg-gradient-to-r from-gray-100 to-gray-200">
+                            <th class="px-4 py-3 border border-gray-300 text-left font-semibold whitespace-nowrap">Material</th>
+                            <th class="px-4 py-2 border border-gray-300 text-left font-semibold whitespace-nowrap">Supplier</th>
+                            <th class="px-4 py-2 border border-gray-300 text-left font-semibold whitespace-nowrap bg-red-100">Document Date</th>
+                            <th class="px-4 py-2 border border-gray-300 text-left font-semibold whitespace-nowrap">GPDB Price Current</th>
+                            <th class="px-4 py-2 border border-gray-300 text-left font-semibold whitespace-nowrap">Invoice PCS Price</th>
+                            <th class="px-4 py-2 border border-gray-300 text-left font-semibold whitespace-nowrap">Quantity</th>
+                            <th class="px-4 py-2 border border-gray-300 text-left font-semibold whitespace-nowrap">Difference Value</th>
+                            <th class="px-4 py-2 border border-gray-300 text-left font-semibold whitespace-nowrap">Reference</th>
+                            <th class="px-4 py-2 border border-gray-300 text-left font-semibold whitespace-nowrap">MM doc. number</th>
+                            <th class="px-4 py-2 border border-gray-300 text-left font-semibold whitespace-nowrap">Full price per 1000 pcs</th>
+                            <th class="px-4 py-2 border border-gray-300 text-left font-semibold whitespace-nowrap">Affiliate</th>
+                            <th class="px-4 py-2 border border-gray-300 text-left font-semibold whitespace-nowrap">MPF Price</th>
+                            <th class="px-4 py-2 border border-gray-300 text-left font-semibold whitespace-nowrap">MPF Price Valid From</th>
+                            <th class="px-4 py-2 border border-gray-300 text-left font-semibold whitespace-nowrap">MPF Price Valid To</th>
+                            <th class="px-4 py-2 border border-gray-300 text-left font-semibold whitespace-nowrap">Base Price</th>
+                            <th class="px-4 py-2 border border-gray-300 text-left font-semibold whitespace-nowrap">Price Base</th>
+                            <th class="px-4 py-2 border border-gray-300 text-left font-semibold whitespace-nowrap">Base Price Valid From</th>
+                            <th class="px-4 py-2 border border-gray-300 text-left font-semibold whitespace-nowrap">Base Price Valid To</th>
+                            <th class="px-4 py-2 border border-gray-300 text-left font-semibold whitespace-nowrap">Metal Price</th>
+                            <th class="px-4 py-2 border border-gray-300 text-left font-semibold whitespace-nowrap bg-red-100">Comments</th>
+                            <th class="px-4 py-2 border border-gray-300 text-left font-semibold whitespace-nowrap bg-red-200">Released</th>
+                            <th class="px-4 py-2 border border-gray-300 text-left font-semibold whitespace-nowrap">Upload Time</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white">
+                        <tr class="hover:bg-gray-100">
+                            <td class="border px-4 py-2">{{ item.data.material }}</td>
+                            <td class="border px-4 py-2 whitespace-nowrap">{{ item.data.supplier }}</td>
+                            <td class="border px-4 py-2">{{ item.data.document_date }}</td>
+                            <td class="border px-4 py-2">{{ item.data.gpdb_price_current }}</td>
+                            <td class="border px-4 py-2">{{ item.data.invoice_pcs_price }}</td>
+                            <td class="border px-4 py-2">{{ item.data.quantity }}</td>
+                            <td class="border px-4 py-2">{{ item.data.difference_value }}</td>
+                            <td class="border px-4 py-2">{{ item.data.reference }}</td>
+                            <td class="border px-4 py-2">{{ item.data.mm_doc_number }}</td>
+                            <td class="border px-4 py-2">{{ item.data.full_price_per_1000_pcs }}</td>
+                            <td class="border px-4 py-2">{{ item.data.affiliate }}</td>
+                            <td class="border px-4 py-2">{{ item.data.mpf_price }}</td>
+                            <td class="border px-4 py-2">{{ item.data.mpf_price_valid_from }}</td>
+                            <td class="border px-4 py-2">{{ item.data.mpf_price_valid_to }}</td>
+                            <td class="border px-4 py-2">{{ item.data.base_price }}</td>
+                            <td class="border px-4 py-2">{{ item.data.price_base }}</td>
+                            <td class="border px-4 py-2">{{ item.data.base_price_valid_from }}</td>
+                            <td class="border px-4 py-2">{{ item.data.base_price_valid_to }}</td>
+                            <td class="border px-4 py-2">{{ item.data.metal_price }}</td>
+                            <td class="border px-4 py-2 whitespace-nowrap">{{ item.data.comments }}</td>
+                            <td class="border px-4 py-2">{{ item.data.released }}</td>
+                            <td class="border px-4 py-2 whitespace-nowrap">{{ item.data.upload_date }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        <ol class="list-decimal pl-6">
+            {% for step in item.decision_steps %}
+                <li>
+                        <span class="bold">{{ step.step }}</span> -
+                        {% if step.released %}
+                            <span class="released">{{ step.result }}</span>
+                        {% else %}
+                            <span class="not-released">{{ step.result }}</span>
+                        {% endif %}
+                        {% if step.root_cause %}
+                            <div class="root-cause">Root Cause: {{ step.root_cause }}</div>
+                        {% endif %}
+                </li>
+            {% endfor %}
+        </ol>
+        {% endfor %}
+        {% else %}
+        <p class="mt-8">No data available.</p>
+        {% endif %}
+
+    </div>
+</body>
+
+<style>
+        .font-playfair {
+                font-family: 'Playfair Display', serif;
+        }
+        .released { color: green; }
+        .not-released { color: red; }
+        .bold { font-weight: bold; }
+        .root-cause { margin-left: 20px; }
+    </style>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Get the context of the canvas element
+    var materialCtx = document.getElementById('materialPieChart').getContext('2d');
+
+    // Define data for the pie chart
+    var materialData = {
+        labels: ['Released', 'Not Released'],
+        datasets: [{
+            data: [{{ released_count }}, {{ not_released_count }}],
+            backgroundColor: [
+                'rgba(75, 192, 192, 0.2)',
+                'rgba(255, 99, 132, 0.2)'
+            ],
+            borderColor: [
+                'rgba(75, 192, 192, 1)',
+                'rgba(255, 99, 132, 1)'
+            ],
+            borderWidth: 1
+        }]
+    };
+
+    // Define options for the pie chart
+    var materialOptions = {
+        responsive: true,
+        maintainAspectRatio: false
+    };
+
+    // Create the pie chart
+    var materialPieChart = new Chart(materialCtx, {
+        type: 'pie',
+        data: materialData,
+        options: materialOptions
+    });
+</script>
+
+{% endblock %}

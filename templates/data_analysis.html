@@ -1,0 +1,334 @@
+{% extends 'base.html' %}
+{% block content %}
+{% include 'navbar.html' %}
+<body class="bg-gray-50">
+<div class="px-24 pt-10">
+    <h1 class="text-gray-800 text-3xl font-semibold sm:text-4xl mb-4 pb-4 text-center font-playfair">Invoice Release Status Summary</h1>
+    <p class="text-lg font-semibold"><span id="materialInfo">{{ material }}</span></p>
+
+    <div class="flex justify-center mb-8 space-x-4">
+        <div class="bg-white p-4 rounded-lg shadow-md w-1/5 text-center">
+            <p class="text-lg font-semibold text-blue-600">Number of samples</p>
+            <p class="text-2xl font-bold text-gray-800"><span id="materialCount">{{ material_count }}</span></p>
+        </div>
+        <div class="bg-white p-4 rounded-lg shadow-md w-1/5 text-center">
+            <p class="text-lg font-semibold text-blue-600">Released count</p>
+            <p class="text-2xl font-bold text-gray-800"><span id="releasedCount">{{ released_count }}</span></p>
+        </div>
+        <div class="bg-white p-4 rounded-lg shadow-md w-1/5 text-center">
+            <p class="text-lg font-semibold text-blue-600">Not Released count</p>
+            <p class="text-2xl font-bold text-gray-800"><span id="notReleasedCount">{{ not_released_count }}</span></p>
+        </div>
+    </div>
+
+    <div class="bg-white p-6 rounded-lg shadow-md">
+        <h2 class="text-xl font-semibold mb-4 text-center font-playfair">Filter By :</h2>
+        <form id="filterForm" method="GET" action="" class="flex items-center text-gray-800 mb-1 space-x-4 pt-2">
+                    <div class="flex items-center space-x-2 w-48">
+                        <label for="{{ form.material.id_for_label }}" class="block text-gray-700 font-medium mb-1">{{ form.material.label }}</label>
+                        {{ form.material }}
+                    </div>
+                    <div class="flex items-center space-x-2 w-48">
+                        <label for="{{ form.upload_date.id_for_label }}" class="block text-gray-700 font-medium mb-1">{{ form.upload_date.label }}</label>
+                        {{ form.upload_date }}
+                    </div>
+                    <div class="flex items-center space-x-2 w-48">
+                        <label for="{{ form.supplier.id_for_label }}" class="block text-gray-700 font-medium mb-1">{{ form.supplier.label }}</label>
+                        {{ form.supplier }}
+                    </div>
+                    <div class="flex items-center space-x-2 w-48">
+                        <label for="{{ form.mm_doc_number.id_for_label }}" class="block text-gray-700 font-medium mb-1">{{ form.mm_doc_number.label }}</label>
+                        {{ form.mm_doc_number }}
+                    </div>
+                    <div class="flex items-center space-x-2 w-48">
+                        <label for="{{ form.reference.id_for_label }}" class="block text-gray-700 font-medium mb-1">{{ form.reference.label }}</label>
+                        {{ form.reference }}
+                    </div>
+                    <div class="flex items-center space-x-2 w-48">
+                        <label for="{{ form.root_cause.id_for_label }}" class="block text-gray-700 font-medium mb-1">{{ form.root_cause.label }}</label>
+                        {{ form.root_cause }}
+                    </div>
+                            <input type="hidden" name="released" value="true" id="releasedInput">
+
+            <div class="text-center">
+                <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-6 rounded-md transition duration-300">Filter</button>
+             </div>
+
+        </form>
+    </div>
+
+    <div class="py-4 pt-8">
+    <div class="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-start md:items-center space-y-8 md:space-y-0">
+        <div class="flex flex-col md:flex-row space-y-8 md:space-y-0 md:space-x-8">
+            <div class="bg-white p-6 rounded-lg shadow-md flex-grow md:w-1/2 lg:w-3/5">
+                <div class="mb-4 text-center">
+                    <p class="text-xl font-semibold text-center font-playfair">Root Cause Chart</p>
+                </div>
+                <div class="mb-4 pt-4 flex justify-center">
+                    <canvas id="rootCausesChart" width="600" height="450"></canvas>
+                </div>
+            </div>
+            <div class="bg-white p-6 rounded-lg shadow-md flex-grow md:w-1/2 lg:w-2/5 custom-padding">
+                <div class="mb-4 text-center">
+                    <p class="text-xl font-semibold text-center font-playfair">Release Status Chart</p>
+                </div>
+                <div class="mb-4 pt-4 flex justify-center">
+                    <canvas id="myChart" width="300" height="280"></canvas>
+                </div>
+                <div class="text-center pt-8">
+                    <button class="filter-button inline-block px-4 py-2 bg-green-500 text-white font-semibold rounded-md mr-4 hover:bg-green-600 transition duration-300" data-filter="released">Released</button>
+                    <button class="filter-button inline-block px-4 py-2 bg-red-500 text-white font-semibold rounded-md hover:bg-red-600 transition duration-300" data-filter="not_released">Not Released</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+    <div id="tableContainer"></div>
+
+</div>
+</body>
+<style>
+.font-playfair {
+        font-family: 'Playfair Display', serif;
+    }
+.custom-padding {
+    padding-left: 4rem;
+    padding-right: 4rem;
+}
+form#filterForm select {
+        width: 70px;
+    }
+</style>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@latest"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@latest"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+
+<script>
+
+// Variable to store the Chart instance
+var myChart;
+var rootCausesChart;
+
+// Function to make AJAX request and update chart and material information
+function fetchData(formData) {
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', '{% url 'get_count' %}?' + new URLSearchParams(formData).toString(), true);
+    xhr.onload = function () {
+        if (xhr.status === 200) {
+            var counts = JSON.parse(xhr.responseText);
+            updateChart(counts.released_count, counts.not_released_count);
+            updateBarChart(counts.bar_chart_data.labels, counts.bar_chart_data.counts);
+            updateMaterialInfo(counts.material, counts.material_count, counts.released_count, counts.not_released_count);
+        }
+    };
+    xhr.send();
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+            const buttons = document.querySelectorAll('.filter-button');
+            const tableContainer = document.getElementById('tableContainer');
+
+            buttons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const filter = button.getAttribute('data-filter');
+                    const released = (filter === 'released') ? 'true' : 'false';
+                    fetchTableData(released);
+                });
+            });
+
+            function fetchTableData(released) {
+                const xhr = new XMLHttpRequest();
+                xhr.open('GET', `{% url 'get_table_data' %}?released=${released}`, true);
+                xhr.onload = function () {
+                    if (xhr.status === 200) {
+                        const responseData = JSON.parse(xhr.responseText);
+                        tableContainer.innerHTML = responseData.table_html;
+                        filterTableRows(released);
+                    }
+                };
+                xhr.send();
+            }
+
+            function filterTableRows(filter) {
+                const tableRows = document.querySelectorAll('#tableContainer tbody tr');
+                const table = document.querySelector('.table-auto');
+
+                let visibleRowsExist = false;
+
+                tableRows.forEach(row => {
+                    if (filter === 'true') {
+                        if (row.classList.contains('released')) {
+                            row.style.display = 'table-row';
+                            visibleRowsExist = true;
+                        } else {
+                            row.style.display = 'none';
+                        }
+                    } else if (filter === 'false') {
+                        if (!row.classList.contains('released')) {
+                            row.style.display = 'table-row';
+                            visibleRowsExist = true;
+                        } else {
+                            row.style.display = 'none';
+                        }
+                    }
+                });
+
+                if (!visibleRowsExist) {
+                    table.style.display = 'none';
+                } else {
+                    table.style.display = 'table';
+                }
+            }
+        });
+
+// Function to update chart
+function updateChart(releasedCount, notReleasedCount) {
+            // Destroy existing chart if it exists
+            if (myChart) {
+                myChart.destroy();
+            }
+
+            var ctx = document.getElementById('myChart').getContext('2d');
+            myChart = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: ['Released', 'Not Released'],
+                    datasets: [{
+                        label: 'Count',
+                        data: [releasedCount, notReleasedCount],
+                        backgroundColor: [
+                            'rgba(75, 192, 192, 0.2)',
+                            'rgba(255, 99, 132, 0.2)'
+                        ],
+                        borderColor: [
+                            'rgba(75, 192, 192, 1)',
+                            'rgba(255, 99, 132, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    var label = context.label || '';
+                                    var value = context.raw || 0;
+                                    return label + ': ' + value;
+                                }
+                            }
+                        },
+                        datalabels: {
+                            display: true,
+                            color: 'black',
+                            formatter: (value, ctx) => {
+                                return value;
+                            },
+                            font: {
+                                weight: 'bold',
+                                size: 14
+                            },
+                            anchor: 'center',
+                            align: 'center'
+                        }
+                    }
+                },
+                plugins: [ChartDataLabels]
+            });
+        }
+
+// Function to update bar chart
+function updateBarChart(labels, counts) {
+    // Destroy existing chart if it exists
+    if (rootCausesChart) {
+        rootCausesChart.destroy();
+    }
+
+    // Generate colors for each label
+    var colors = generateColors(labels.length);
+
+    var ctx = document.getElementById('rootCausesChart').getContext('2d');
+    rootCausesChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Root Causes',
+                data: counts,
+                backgroundColor: colors,
+                borderColor: colors.map(color => adjustColor(color, -20)), // Darken border color slightly
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            },
+            plugins: {
+                annotation: {
+                    annotations: counts.map((count, index) => ({
+                        type: 'label',
+                        xValue: index,
+                        yValue: count + 0.5, // Adjust this value to position the label correctly
+                        backgroundColor: 'rgba(0, 0, 0, 0.7)',
+                        content: count.toString(),
+                        color: 'white',
+                        font: {
+                            weight: 'bold'
+                        }
+                    }))
+                }
+            }
+        }
+    });
+}
+
+// Function to generate an array of colors
+function generateColors(length) {
+    var colors = [];
+    for (var i = 0; i < length; i++) {
+        var hue = Math.floor(i * (360 / length));
+        colors.push('hsl(' + hue + ', 70%, 50%)');
+    }
+    return colors;
+}
+
+// Function to adjust color brightness
+function adjustColor(color, amount) {
+    return color.replace(/hsl\(\d+, \d+%, (\d+)%\)/, (match, p1) => {
+        return `hsl(${parseInt(p1) + amount})`;
+    });
+}
+
+// Function to update material information
+function updateMaterialInfo(material, materialCount, releasedCount, notReleasedCount) {
+    document.getElementById('materialInfo').textContent = material;
+    document.getElementById('materialCount').textContent = materialCount;
+    document.getElementById('releasedCount').textContent = releasedCount;
+    document.getElementById('notReleasedCount').textContent = notReleasedCount;
+}
+
+// Load default data when the page loads
+document.addEventListener('DOMContentLoaded', function() {
+    var formData = new FormData(document.getElementById('filterForm'));
+    fetchData(formData);
+ });
+
+// AJAX request on form submission
+document.getElementById('filterForm').addEventListener('submit', function(event) {
+    event.preventDefault();
+    var formData = new FormData(this);
+    fetchData(formData);
+ });
+
+</script>
+
+{% endblock %}

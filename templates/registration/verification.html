@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block title %}Verification{% endblock %}
+
+{% block content %}
+<body class="bg-gray-100">
+    <main class="w-full h-screen flex flex-col items-center justify-center px-2">
+        <div class="max-w-lg w-full bg-white shadow-xl rounded-3xl px-14 pt-3 pb-4 text-gray-600">
+            <div class="text-center">
+                <img src="/static/src/images/bsc1.png" width="170" class="mx-auto" alt="logo"/>
+                <div class="mt-5 space-y-2">
+                    <h3 class="text-gray-700 text-3xl font-light sm:text-4xl"> Verification </h3>
+                    <p class="text-sm sm:text-base pt-4"> Please enter the verification code sent to the supervisor. </p>
+                </div>
+            </div>
+            <form method="post" class="mt-4 space-y-4">
+                {% csrf_token %}
+                {% if messages %}
+                    <div class="text-red-500">
+                        {% for message in messages %}
+                            <p>{{ message }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+                <div>
+                    <label for="id_verification_code" class="block text-sm font-medium text-gray-700">Verification Code</label>
+                    <input type="text" name="verification_code" id="id_verification_code" required class="w-full px-3 py-2 text-gray-700 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm"/>
+                </div>
+                <button type="submit" class="w-full py-2 text-white font-medium bg-blue-500 hover:bg-blue-400 active:bg-blue-600 rounded-lg shadow-lg duration-150">Verify</button>
+            </form>
+        </div>
+    </main>
+</body>
+{% endblock %}

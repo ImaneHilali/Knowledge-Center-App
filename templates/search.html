@@ -1,0 +1,224 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div>
+{% include 'navbar.html' %}
+
+<section class="pt-10 pb-10">
+
+   <div class="max-w-2xl mx-auto text-center">
+        <h3 class="text-gray-800 text-3xl font-semibold sm:text-4xl font-playfair">
+            Search for Business Support Info
+        </h3>
+        <p class="mt-4 text-gray-600 leading-relaxed">
+            Empower yourself to quickly find the information you need by utilizing our comprehensive search bar;
+            simply type your question or keywords and explore the relevant documents with their accompanying summaries
+            to efficiently address any business support inquiries you may encounter.
+        </p>
+   </div>
+    <form id="searchForm" class="max-w-xl px-8 mx-auto mt-8 mb-4 flex relative">
+        {% csrf_token %}
+        <svg xmlns="http://www.w3.org/2000/svg" class="absolute top-0 bottom-0 w-6 h-6 my-auto text-gray-400 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+        </svg>
+        <input id="searchInput" type="text" placeholder="Search or ask a question" class="py-3 pl-12 pr-4 border border-r-0 rounded-l-lg shadow-sm focus:outline-none focus:border-blue-500 w-full"/>
+        <button id="searchButton" class="py-3 px-4 bg-blue-500 text-white rounded-r-lg">
+            Search
+        </button>
+    </form>
+
+    <section id="searchResults" class="py-4">
+        <div class="max-w-screen-lg mx-auto px-4 md:px-8">
+            <ul id="resultsList" class="mt-8 divide-y space-y-3"></ul>
+        </div>
+    </section>
+</section>
+
+<div class="fixed bottom-5 right-5">
+        <button class="bg-blue-500 text-white p-3 rounded-full shadow-lg" onclick="toggleChat()">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16h6M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+        </button>
+    </div>
+    <div class="fixed bottom-20 right-10 bg-white border border-gray-300 rounded-lg shadow-lg w-80" id="chatPopup" style="display: none;">
+        <div class="bg-blue-500 text-white p-3 rounded-t-lg flex justify-between items-center">
+            <h2 class="text-lg">Chatbot</h2>
+            <button class="text-white" onclick="toggleChat()">&times;</button>
+        </div>
+        <div class="p-3 h-64 overflow-y-auto" id="chatBody"></div>
+        <div class="p-3 border-t border-gray-300 flex items-center">
+            <input type="text" id="chatInput" placeholder="Type your message..." class="flex-grow p-2 border border-gray-300 rounded-lg mr-2">
+            <button class="bg-blue-500 text-white p-2 rounded-lg" onclick="sendMessage()">Send</button>
+        </div>
+    </div>
+</div>
+<script>
+    document.getElementById('searchForm').addEventListener('submit', async function(event) {
+        event.preventDefault();
+        const query = document.getElementById('searchInput').value;
+
+        const response = await fetch('/search/semantic_search/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: JSON.stringify({ query })
+        });
+
+        const result = await response.json();
+        const resultsList = document.getElementById('resultsList');
+        resultsList.innerHTML = '';
+
+        if (response.ok) {
+            const { generated_response, search_results } = result;
+
+            // Display the generated response
+            const generatedResponseItem = document.createElement('li');
+            generatedResponseItem.classList.add('px-4', 'py-5', 'duration-150', 'bg-gray-50', 'hover:border-white', 'hover:rounded-xl', 'hover:bg-gray-100');
+            generatedResponseItem.innerHTML = `
+                <div class="space-y-3">
+                    <div class="flex items-center gap-x-3">
+                        <div>
+                            <h3 class="text-base text-gray-800 font-bold mt-1"> Response :</h3>
+                        </div>
+                    </div>
+                    <p class="text-gray-600 text-sm">${generated_response}</p>
+                </div>
+            `;
+            resultsList.appendChild(generatedResponseItem);
+
+            // Create a container for title and instruction
+            const titleAndInstructionContainer = document.createElement('div');
+            titleAndInstructionContainer.classList.add('mb-4'); // Add margin bottom for spacing
+
+
+            // Create instruction element
+            const instruction = document.createElement('p');
+            instruction.classList.add('text-gray-800', 'font-bold','pt-4', 'mt-2');
+            instruction.textContent = 'Here is the List of relevant files, Click on the name of the file to open it :';
+            titleAndInstructionContainer.appendChild(instruction);
+
+            // Append title and instruction container to resultsList
+            resultsList.appendChild(titleAndInstructionContainer);
+
+            // Display the search results
+            search_results.forEach(item => {
+                const listItem = document.createElement('li');
+                listItem.classList.add('px-4', 'py-5', 'duration-150', 'hover:border-white', 'hover:rounded-xl', 'hover:bg-gray-50');
+                listItem.innerHTML = `
+                    <a href="/media/${item[1]}" target="_blank" class="space-y-3">
+                        <div class="flex items-center gap-x-3">
+                            <div>
+                                <h3 class="text-base text-gray-800 font-semibold mt-1">${item[1].split('.').slice(0, -1).join('.')}</h3>
+                            </div>
+                        </div>
+                        <p class="text-gray-600 sm:text-sm">${item[2]}</p>
+                        <div class="text-sm text-gray-600 flex items-center gap-6">
+                            <span class="flex items-center gap-2">
+                                <svg class="w-5 h-5 text-gray-500 inline-block mr-2" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path fill-rule="evenodd" clip-rule="evenodd" d="M10 2C12.7614 2 15 4.23858 15 7C15 9.76142 12.7614 12 10 12C7.23858 12 5 9.76142 5 7C5 4.23858 7.23858 2 10 2ZM10 14C12.7614 14 17 15.5479 17 17V18H3V17C3 15.5479 7.23858 14 10 14Z" fill="#9CA3AF"/>
+                                </svg>
+                                <span>${item[3]}</span>
+                            </span>
+                            <span class="flex items-center gap-2">
+                                <svg class="w-5 h-5 text-gray-500 inline-block mr-2" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M15 2H14V0H13V2H7V0H6V2H5C3.89543 2 3 2.89543 3 4V16C3 17.1046 3.89543 18 5 18H15C16.1046 18 17 17.1046 17 16V4C17 2.89543 16.1046 2 15 2ZM5 16V6H15V16H5ZM6 8H8V10H6V8ZM10 8H12V10H10V8Z" fill="#9CA3AF"/>
+                                </svg>
+                                <span>${item[4].split('T')[0]}</span>
+                            </span>
+                        </div>
+                    </a>
+                `;
+                resultsList.appendChild(listItem);
+            });
+        } else {
+            const errorMessage = document.createElement('li');
+            errorMessage.classList.add('px-4', 'py-5', 'duration-150', 'hover:border-white', 'hover:rounded-xl', 'hover:bg-gray-50');
+            errorMessage.innerHTML = `
+                <div class="space-y-3">
+                    <div class="flex items-center gap-x-3">
+                        <div>
+                            <h3 class="text-base text-gray-800 font-semibold mt-1">Error</h3>
+                        </div>
+                    </div>
+                    <p class="text-gray-600 sm:text-sm">${result.error}</p>
+                </div>
+            `;
+            resultsList.appendChild(errorMessage);
+        }
+    });
+
+
+
+function toggleChat() {
+            var chatPopup = document.getElementById("chatPopup");
+            chatPopup.style.display = chatPopup.style.display === "block" ? "none" : "block";
+        }
+
+        function sendMessage() {
+        var chatInput = document.getElementById("chatInput");
+        var chatBody = document.getElementById("chatBody");
+        var message = chatInput.value;
+
+        if (message.trim() === "") return;
+
+        // Append user message to chat body
+        var userMessage = document.createElement("div");
+        userMessage.className = "bg-gray-200 p-2 rounded-lg message-spacing";
+        userMessage.textContent = message;
+        chatBody.appendChild(userMessage);
+
+        chatInput.value = "";
+
+        // Send message to backend
+        fetch('/search/chatbot/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCookie('csrftoken')
+            },
+            body: JSON.stringify({ query: message })
+        })
+        .then(response => response.json())
+        .then(data => {
+            var botMessage = document.createElement("div");
+            botMessage.className = "bg-blue-100 p-2 rounded-lg message-spacing";
+            botMessage.textContent = data.generated_response ? data.generated_response : "Sorry, I couldn't find an answer.";
+            chatBody.appendChild(botMessage);
+        })
+        .catch(error => {
+            var botMessage = document.createElement("div");
+            botMessage.className = "bg-red-100 p-2 rounded-lg message-spacing";
+            botMessage.textContent = "An error occurred. Please try again.";
+            chatBody.appendChild(botMessage);
+        });
+    }
+
+        // Helper function to get CSRF token
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+</script>
+
+<style>
+    .font-playfair {
+        font-family: 'Playfair Display', serif;
+    }
+    .message-spacing {
+        margin-top: 10px;
+    }
+</style>
+{% endblock content %}

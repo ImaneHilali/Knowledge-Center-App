@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+
+{% block title %}Sign Up{% endblock %}
+
+{% block content %}
+
+<body class="bg-gray-100">
+    <main class="w-full h-screen flex flex-col items-center justify-center px-2">
+        <div class="max-w-lg w-full bg-white shadow-xl rounded-3xl px-14 pt-3 pb-4 text-gray-600">
+            <div class="text-center">
+                <img src="/static/src/images/bsc1.png" width="170" class="mx-auto" alt="logo"/>
+                <div class="mt-5 space-y-2">
+                    <h3 class="text-gray-700 text-3xl font-light sm:text-4xl">Sign Up</h3>
+                    <p class="text-sm sm:text-base pt-4">Already have an account?
+                        <a href="/accounts/login/" class="font-medium text-blue-500 hover:text-blue-400">Log in</a>
+                    </p>
+                </div>
+            </div>
+            <form id="signupForm" method="post" action="{% url 'signup' %}" class="mt-4 space-y-4">
+                {% csrf_token %}
+                <div>
+                    <label for="id_username" class="block text-sm font-medium text-gray-700">Name</label>
+                    <div class="text-xs text-gray-500 mb-2" id="id_username_helptext">Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.</div>
+                    <input type="text" name="username" id="id_username" required class="w-full px-3 py-2 text-gray-700 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm"/>
+                </div>
+                <div>
+                    <label for="id_email" class="block text-sm font-medium text-gray-700">Email</label>
+                    <input type="email" name="email" id="id_email" required class="w-full px-3 py-2 text-gray-700 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm"/>
+                </div>
+                <div>
+                    <label for="id_password1" class="block text-sm font-medium text-gray-700">Password</label>
+                    <div class="text-xs text-gray-500 mb-2" id="id_password1_helptext">
+                        <ul class="list-disc pl-5">
+                            <li>Your password can’t be too similar to your other personal information.</li>
+                            <li>Your password must contain at least 8 characters.</li>
+                            <li>Your password can’t be a commonly used password.</li>
+                            <li>Your password can’t be entirely numeric.</li>
+                        </ul>
+                    </div>
+                    <input type="password" name="password1" autocomplete="new-password" required aria-describedby="id_password1_helptext" id="id_password1" class="w-full px-3 py-2 text-gray-700 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm"/>
+                </div>
+                <div>
+                    <label for="id_password2" class="block text-sm font-medium text-gray-700">Password confirmation</label>
+                    <input type="password" name="password2" autocomplete="new-password" required aria-describedby="id_password2_helptext" id="id_password2" class="w-full px-3 py-2 text-gray-700 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm"/>
+                </div>
+                <div id="errorMessages" class="text-red-500"></div>
+                <button type="submit" class="w-full py-2 text-white font-medium bg-blue-500 hover:bg-blue-400 active:bg-blue-600 rounded-lg shadow-lg duration-150">Sign Up</button>
+            </form>
+        </div>
+    </main>
+
+    <script>
+        document.getElementById('signupForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const form = event.target;
+            const formData = new FormData(form);
+            const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+            fetch(form.action, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': csrfToken,
+                },
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                const errorMessagesDiv = document.getElementById('errorMessages');
+                errorMessagesDiv.innerHTML = '';
+                if (data.success) {
+                    window.location.href = data.redirect_url;
+                } else {
+                    for (const [field, errors] of Object.entries(data.errors)) {
+                        errors.forEach(error => {
+                            const errorParagraph = document.createElement('p');
+                            errorParagraph.textContent = error.message;
+                            errorMessagesDiv.appendChild(errorParagraph);
+                        });
+                    }
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        });
+    </script>
+</body>
+{% endblock %}
